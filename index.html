@@ -215,8 +215,8 @@ function mkCard(w){
 function rfilt(){
   const specials=[
     `<button class="pill pill-card${aReg==='All'&&!aFlavours.length?' on':''}" onclick="sAll()">ALL</button>`,
-    `<button class="pill pill-card${aReg==='rec'?' on':''}" onclick="oRec()">RECOMMEND ★</button>`,
-    ...(aSim?[`<button class="pill pill-card on" onclick="clearSim()">SIMILAR =</button>`]:[]),
+    `<button class="pill pill-card${aReg==='rec'?' on':''}" onclick="oRec()">★ RECOMMEND</button>`,
+    ...(aSim?[`<button class="pill pill-card on" onclick="clearSim()">≈ SIMILAR</button>`]:[]),
     ...REGIONS.map(r=>`<button class="pill pill-reg${aReg===r?' on':''}" onclick="sReg('${r}')">${r}</button>`)
   ];
   document.getElementById('filters').innerHTML=specials.join('');
@@ -226,7 +226,7 @@ function rfilt(){
     const on=aFlavours.includes(k),col=cc(i);
     const possible=inMode||on||canAdd(k);
     const style=on?`background:${col}22;border-color:${col};color:${col}`:'';
-    return `<button class="pill${!possible?' off':''}" style="${style}" onclick="tFlavour('${k}')">${NI[i]} ${NL[i]}</button>`;
+    return `<button class="pill${!possible?' off':''}" style="${style}" onclick="tFlavour('${k}')"><span style="margin-right:4px">${NI[i]}</span>${NL[i]}</button>`;
   }).join('');
 }
 
