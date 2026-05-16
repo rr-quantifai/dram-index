@@ -233,14 +233,13 @@ function rfilt(){
     const on=aFlavours.includes(k),col=cc(i);
     const possible=!inMode&&(on||canAdd(k));
     const style=on?`background:${col}22;border-color:${col};color:${col}`:'';
-    return `<button class="pill pill-icon${aFlavours.includes(k)?' on':''}" style="${style}" onclick="tFlavour('${k}')">${aFlavours.includes(k)?NL[i]:NI[i]}</button>`;
+    return `<button class="pill pill-icon${on?' on':''}${!possible?' off':''}" style="${style}" onclick="tFlavour('${k}')">${on?NL[i]:NI[i]}</button>`;
   }).join('');
 }
 
 function sAll(){aReg='All';aFlavours=[];aSim=null;rfilt();rg();}
 function sReg(r){if(aReg===r){sAll();}else{aReg=r;aSim=null;rfilt();rg();}}
 function tFlavour(k){
-  if(aReg==='rec'||aReg==='similar'){aReg='All';aSim=null;}
   aFlavours=aFlavours.includes(k)?aFlavours.filter(x=>x!==k):[...aFlavours,k];
   rfilt();rg();
 }
