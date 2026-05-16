@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dram Index I Whiskey scoring system</title>
+<style>
+:root{
+  --bg:#0d0b08;--bgc:#161310;--bgm:#100e0b;
+  --gold:#c8903c;--gl:#e0a84e;--gd:#6b4c1a;
+  --tx:#e5d9c7;--mu:#7a6d5d;--dim:#3a3028;--br:#2d2720;
+  --green:#6abf7a;--red:#c95c5c;
+  --sh:0 4px 24px rgba(0,0,0,.52);
+  --sp:20px;
+  --ser:'Palatino Linotype','Book Antiqua',Palatino,serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.page{padding:var(--sp);display:flex;flex-direction:column;gap:var(--sp)}
+
+/* SEARCH */
+.srch-unit{background:var(--bgc);border:1px solid var(--br);border-radius:14px;display:flex;align-items:center;gap:10px;padding:13px 16px;box-shadow:var(--sh)}
+.srch-ico{color:var(--mu);font-size:15px;flex-shrink:0;line-height:1}
+.srch-si{flex:1;background:transparent;border:none;color:var(--tx);font-size:14px;outline:none;-webkit-appearance:none}
+.srch-si::placeholder{color:var(--mu)}
+.srch-si::-webkit-search-cancel-button{-webkit-appearance:none}
+
+/* FILTERS */
+.fs{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.fs::-webkit-scrollbar{display:none}
+.filter-wrap{display:flex;flex-direction:column;gap:12px}
+.pill{padding:6px 14px;border-radius:20px;border:1px solid var(--br);background:transparent;color:var(--mu);font-size:12px;white-space:nowrap;cursor:pointer;flex-shrink:0;transition:all .2s;-webkit-tap-highlight-color:transparent}
+.pill.on{background:var(--gd);border-color:var(--gold);color:var(--gl)}
+.pill.pill-card{background:linear-gradient(150deg,#1b1814 0%,#131110 100%);border-color:var(--br);color:var(--tx);letter-spacing:1.5px}
+.pill.pill-card.on{background:linear-gradient(150deg,#231d13 0%,#1b1509 100%);border-color:var(--gold);color:var(--gl)}
+.pill-reg{text-transform:uppercase;letter-spacing:1px}
+.pill.off{opacity:.3;cursor:not-allowed;pointer-events:none}
+
+/* GRID */
+.grid{display:flex;flex-direction:column;gap:var(--sp)}
+
+/* CARD */
+.card{display:flex;flex-direction:column;gap:10px;background:linear-gradient(150deg,#1b1814 0%,#131110 100%);border:1px solid var(--br);border-radius:14px;padding:18px 20px;cursor:pointer;box-shadow:var(--sh);transition:border-color .15s;-webkit-tap-highlight-color:transparent;animation:fup .22s ease forwards}
+.card:active{border-color:var(--gd)}
+.c-top,.c-bot{display:flex;justify-content:space-between;align-items:center}
+.c-name{font-family:var(--ser);font-size:17px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1;margin-right:12px}
+.c-reg{font-size:10px;color:var(--mu);letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap;flex-shrink:0}
+.c-idx{font-family:var(--ser);font-size:28px;color:var(--gold);line-height:1;flex-shrink:0;font-variant-numeric:lining-nums}
+.dots{display:flex;flex-wrap:nowrap;gap:4px;align-items:center;flex-shrink:0}
+.dot{border-radius:50%;display:inline-block;flex-shrink:0}
+
+/* OVERLAY */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;display:none;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.ov.on{display:block}
+
+/* SHEET */
+.sheet{position:fixed;bottom:0;left:0;right:0;background:var(--bgm);border-left:1px solid var(--br);border-right:1px solid var(--br);z-index:101;max-height:92vh;overflow-y:auto;transform:translateY(100%);transition:transform .35s cubic-bezier(.32,.72,0,1);-webkit-overflow-scrolling:touch}
+.sheet.on{transform:translateY(0)}
+.strip{height:3px;background:var(--gold);width:100%}
+.sb{padding:0 var(--sp) var(--sp)}
+
+/* DETAIL */
+.dh{display:flex;align-items:center;gap:12px;padding:var(--sp) 0}
+.d-lft{flex:1;min-width:0}
+.dn{font-family:var(--ser);font-size:24px;font-weight:normal;line-height:1.2;margin-bottom:5px}
+.drg{font-size:11px;color:var(--mu);letter-spacing:2px;text-transform:uppercase}
+.ds{font-family:var(--ser);font-size:28px;color:var(--bgm);line-height:1;flex-shrink:0;font-variant-numeric:lining-nums;background:var(--gold);padding:10px;border-radius:12px;text-box-trim:trim-both;text-box-edge:cap alphabetic}
+.d-sep{height:1px;background:var(--br);margin-bottom:var(--sp)}
+
+/* FLAVOUR BARS */
+.fp{display:flex;flex-direction:column}
+.nr{display:flex;align-items:center;gap:8px;padding:8px 0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.nic{font-size:14px;width:22px;flex-shrink:0;text-align:center}
+.nlb{font-size:12px;width:74px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ntr{flex:1;height:2px;background:var(--br);border-radius:2px;overflow:hidden}
+.nf{height:100%;border-radius:2px}
+.nv{font-size:10px;width:44px;text-align:right;flex-shrink:0}
+.ndesc{max-height:0;overflow:hidden;transition:max-height .28s ease}
+.ndesc.on{max-height:120px}
+.ndesc-in{font-size:12px;color:var(--mu);line-height:1.55;padding:2px 0 10px 30px}
+
+/* NOTES BOX */
+.notes-box{border:1px solid var(--br);border-radius:12px;overflow:hidden;margin-top:var(--sp)}
+.ne{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--br)}
+.ne:last-child{border-bottom:none}
+.ne-age{font-size:12px;color:var(--tx);text-transform:uppercase;letter-spacing:1px;flex:1}
+.ne-price{font-family:var(--ser);font-size:16px;color:var(--gold);font-variant-numeric:lining-nums}
+.ne-comment{padding:14px 16px;font-size:13px;color:var(--tx);line-height:1.6}
+
+/* SIMILAR BUTTON */
+.sim-btn{display:block;width:100%;margin-top:var(--sp);padding:14px 16px;border:1px solid var(--br);border-radius:12px;background:transparent;color:var(--mu);font-size:10px;letter-spacing:2px;text-transform:uppercase;text-align:center;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.sim-btn:active{border-color:var(--gold);color:var(--gl)}
+
+/* RECOMMENDER */
+.r-nav{display:flex;align-items:center;padding:var(--sp) 0}
+.r-qnum{font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:2px;line-height:1}
+.r-back{margin-left:auto;padding:6px 14px;border:1px solid var(--br);border-radius:20px;background:transparent;color:var(--mu);font-size:10px;text-transform:uppercase;letter-spacing:1.5px;cursor:pointer;line-height:1;white-space:nowrap;-webkit-tap-highlight-color:transparent;transition:border-color .15s,color .15s}
+.r-back:active{border-color:var(--gold);color:var(--gl)}
+.r-divider{height:1px;background:var(--br)}
+.rq{font-family:var(--ser);font-size:22px;line-height:1.3;padding:var(--sp) 0}
+.ro{display:flex;flex-direction:column;gap:var(--sp)}
+.ropt{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--bgc);border:1px solid var(--br);border-radius:12px;color:var(--tx);font-size:14px;cursor:pointer;text-align:left;width:100%;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.ropt:active,.ropt.on{border-color:var(--gold);background:var(--gd);color:var(--gl)}
+.ric{font-size:18px}
+
+@keyframes fup{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="srch-unit">
+    <span class="srch-ico">🔍</span>
+    <input class="srch-si" id="srch" type="search" placeholder="Search by name or region…"
+      oninput="rg()" autocomplete="off" autocorrect="off" spellcheck="false">
+  </div>
+  <div class="filter-wrap">
+    <div class="fs" id="filters"></div>
+    <div class="fs" id="flavFilters"></div>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="ov" id="ov" onclick="ca()"></div>
+<div class="sheet" id="dSh"><div class="strip"></div><div class="sb" id="dB"></div></div>
+<div class="sheet" id="rSh"><div class="strip"></div><div class="sb" id="rB"></div></div>
+
+<script>
+const NK=['peat','medicinal','brine','citrus','cocoa','grassy','spice','caramel','driedFruit','orchardFruit','vanilla','floral','honey','sherry'];
+const NL=['Peat','Medicinal','Brine','Citrus','Cocoa','Grassy','Spice','Caramel','Dried Fruit','Orchard','Vanilla','Floral','Honey','Sherry'];
+const NI=['🔥','💊','🌊','🍋','☕','🌿','🌶️','🍬','🍇','🍎','🍦','🌸','🍯','🍷'];
+const NC=[0,0,1,1,1,1,1,2,2,2,2,3,3,3];
+const CC=['#5b9fd4','#6abf7a','#d48a4a','#c95c5c'];
+const LV=['—','Low','Medium','High'];
+const ND={
+  peat:"Smoky flavour ranging from campfire to earthy or sooty, caused by burning peat moss to dry the barley during malting",
+  medicinal:"Flavours of iodine, antiseptic, or bandages, caused by phenols from peat smoke",
+  brine:"Salty, seaside or sea spray flavour, caused by maturation in coastal warehouses where sea air penetrates the casks",
+  citrus:"Notes of lemon, orange, or grapefruit, primarily caused by maturation in active casks and by compounds produced during distillation in taller stills",
+  cocoa:"Notes of roasted beans, espresso, or dark chocolate, generally caused by specific cask maturation such as heavily charred barrels",
+  grassy:"Notes of fresh-cut grass, hay, or garden mint, typically driven by shorter fermentation and faster distillation",
+  spice:"A warm, peppery character — often woody or dried herb — typically from the wood itself and higher distillation temperatures",
+  caramel:"A sweet, rich flavour similar to toffee or butterscotch, caused by natural sugars in oak wood caramelised when barrels are toasted or charred",
+  driedFruit:"Flavours of raisins, figs, prunes, or dates, a key characteristic of whisky aged in ex-sherry casks",
+  orchardFruit:"Flavours of fresh fruit like apples, pears, peaches, or berries, common in whiskies aged in ex-bourbon or wine casks",
+  vanilla:"A dominant and universally present flavour, caused by vanillin naturally occurring in oak wood and extracted by alcohol during maturation",
+  floral:"Notes of heather, rose, or other flowers, typically a result of the distillation process and the specific barley and yeast used",
+  honey:"A sweet, viscous flavour, often an expression of the barley malt itself, also imparted by ageing in American oak casks",
+  sherry:"A sweet, nutty, rich flavour, caused by maturation in oak casks that previously held sherry"
+};
+
+const RAW=[
+  ["Ardbeg 10","Islay",13.00,[3,3,3,2,2,1,2,1,1,1,1,0,0,0],{"10":75},null],
+  ["Laphroaig 10","Islay",6.86,[3,3,3,1,0,1,2,0,0,1,2,0,1,0],{"10":50,"25":500,"27":750,"30":1000,"33":1500},null],
+  ["Talisker 10","Isle of Skye",4.50,[3,1,3,2,0,1,3,1,1,1,1,0,2,0],{},null],
+  ["Lagavulin 16","Islay",3.71,[3,3,3,1,1,1,2,1,2,1,2,0,1,2],{"16":100},null],
+  ["Caol Ila 12","Islay",2.55,[2,1,2,3,0,2,1,1,0,1,1,1,1,0],{},null],
+  ["Connemara","Ireland",2.33,[2,1,1,1,0,2,2,1,0,1,2,3,3,0],{},null],
+  ["Bowmore 12","Islay",2.15,[2,1,2,2,0,1,1,1,1,1,2,3,3,0],{},null],
+  ["Ardmore Legacy","Highland",2.00,[1,1,1,1,1,1,2,1,0,1,3,3,3,0],{},null],
+  ["Oban 14","Highland",1.18,[1,0,2,3,0,1,3,1,2,3,2,1,3,0],{},null],
+  ["Hakushu 12","Japan",1.00,[1,0,1,2,0,3,2,1,1,3,2,2,2,1],{"Dist. Reserve":100,"12":250},null],
+  ["Cardhu 12","Speyside",0.94,[0,0,1,2,0,2,1,3,1,2,2,2,3,0],{},null],
+  ["Amrut Fusion","India",0.84,[1,0,0,2,2,0,3,3,2,3,1,1,2,0],{},null],
+  ["Blue Label","Blended",0.83,[0,0,1,2,1,1,3,3,3,3,3,0,3,2],{},null],
+  ["Bunnahabhain 12","Islay",0.83,[0,1,2,1,0,1,2,3,3,2,2,1,1,3],{},null],
+  ["Jura 10","Isle of Jura",0.73,[0,0,1,2,0,2,2,3,3,3,2,0,3,3],{},null],
+  ["Yamazaki 12","Japan",0.67,[0,0,0,2,1,1,2,2,2,3,3,2,3,2],{},null],
+  ["The Balvenie 12","Speyside",0.62,[0,0,0,1,1,1,2,3,2,3,3,1,3,2],{},null],
+  ["The Macallan 18","Speyside",0.62,[0,0,0,1,2,1,3,3,3,2,3,1,2,3],{"12":100,"18":500,"25":3000,"30":5000},null],
+  ["Glenmorangie 10","Highland",0.60,[0,0,0,3,0,2,1,2,0,2,3,2,3,1],{},null],
+  ["Glenfiddich 12","Speyside",0.48,[0,0,0,2,0,2,1,3,1,3,3,2,2,1],{},null],
+  ["Glenlivet 12","Speyside",0.48,[0,0,0,1,0,2,2,3,1,3,3,2,2,1],{},null],
+  ["Rampur","India",0.36,[0,0,0,3,0,0,3,2,3,2,2,1,3,3],{},null],
+  ["Indri Trini","India",0.29,[0,0,0,2,0,0,3,3,3,3,3,1,2,2],{},"Triple-casked in bourbon, French wine, and sherry barrels"],
+];
+
+const WS=RAW.map(([name,region,idx,na,prices,comment],id)=>({
+  id,name,region,idx,
+  n:Object.fromEntries(NK.map((k,i)=>[k,na[i]])),
+  prices,comment
+}));
+const regCnt={};WS.forEach(w=>{regCnt[w.region]=(regCnt[w.region]||0)+1;});
+const REGIONS=[...new Set(WS.map(w=>w.region))].sort((a,b)=>regCnt[b]-regCnt[a]);
+
+let aReg='All',aFlavours=[],aSim=null,rPrefs={},rStep=0;
+
+const cc=i=>CC[NC[i]];
+const topN=w=>NK.map((k,i)=>({i,v:w.n[k]})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
+const dsz=v=>v===1?5:v===2?7:9;
+const mkDots=list=>list.map(({i,v})=>`<span class="dot" style="width:${dsz(v)}px;height:${dsz(v)}px;background:${cc(i)};opacity:.85"></span>`).join('');
+const matchFlavs=w=>aFlavours.every(k=>w.n[k]>0);
+
+function canAdd(k){
+  const test=[...aFlavours,k];
+  return WS.some(w=>{
+    if(aReg!=='All'&&aReg!=='rec'&&aReg!=='similar'&&w.region!==aReg)return false;
+    return test.every(fk=>w.n[fk]>0);
+  });
+}
+
+function getSimilar(ref){
+  return WS.filter(w=>w.id!==ref.id)
+    .map(w=>({w,d:Math.sqrt(NK.reduce((s,k)=>s+(w.n[k]-ref.n[k])**2,0))}))
+    .sort((a,b)=>a.d-b.d).slice(0,5).map(x=>x.w);
+}
+
+function mkCard(w){
+  return `<div class="card" onclick="oDet(WS[${w.id}])">
+    <div class="c-top"><div class="c-name">${w.name}</div><div class="c-reg">${w.region}</div></div>
+    <div class="c-bot"><div class="c-idx">${w.idx.toFixed(2)}</div><div class="dots">${mkDots(topN(w))}</div></div>
+  </div>`;
+}
+
+function rfilt(){
+  const specials=[
+    `<button class="pill pill-card${aReg==='All'&&!aFlavours.length?' on':''}" onclick="sAll()">ALL</button>`,
+    `<button class="pill pill-card${aReg==='rec'?' on':''}" onclick="oRec()">RECOMMEND ★</button>`,
+    ...(aSim?[`<button class="pill pill-card on" onclick="clearSim()">SIMILAR =</button>`]:[]),
+    ...REGIONS.map(r=>`<button class="pill pill-reg${aReg===r?' on':''}" onclick="sReg('${r}')">${r}</button>`)
+  ];
+  document.getElementById('filters').innerHTML=specials.join('');
+
+  const inMode=aReg==='rec'||aReg==='similar';
+  document.getElementById('flavFilters').innerHTML=NK.map((k,i)=>{
+    const on=aFlavours.includes(k),col=cc(i);
+    const possible=inMode||on||canAdd(k);
+    const style=on?`background:${col}22;border-color:${col};color:${col}`:'';
+    return `<button class="pill${!possible?' off':''}" style="${style}" onclick="tFlavour('${k}')">${NI[i]} ${NL[i]}</button>`;
+  }).join('');
+}
+
+function sAll(){aReg='All';aFlavours=[];aSim=null;rfilt();rg();}
+function sReg(r){aReg=r;aSim=null;rfilt();rg();}
+function tFlavour(k){
+  if(aReg==='rec'||aReg==='similar'){aReg='All';aSim=null;}
+  aFlavours=aFlavours.includes(k)?aFlavours.filter(x=>x!==k):[...aFlavours,k];
+  rfilt();rg();
+}
+function oSim(id){aSim=WS[id];aReg='similar';ca();rfilt();rg();}
+function clearSim(){aSim=null;aReg='All';rfilt();rg();}
+
+function rg(){
+  let list;
+  if(aReg==='rec'){
+    list=WS.map(w=>({w,s:rScore(w,rPrefs)})).sort((a,b)=>b.s-a.s).slice(0,3).map(x=>x.w);
+  }else if(aReg==='similar'&&aSim){
+    list=getSimilar(aSim);
+  }else{
+    const q=document.getElementById('srch').value.toLowerCase();
+    list=WS.filter(w=>{
+      if(aReg!=='All'&&w.region!==aReg)return false;
+      if(q&&!w.name.toLowerCase().includes(q)&&!w.region.toLowerCase().includes(q))return false;
+      if(aFlavours.length&&!matchFlavs(w))return false;
+      return true;
+    }).sort((a,b)=>b.idx-a.idx);
+  }
+  document.getElementById('grid').innerHTML=list.map(mkCard).join('');
+}
+
+function oDet(w){
+  const fp=NK.map((k,i)=>{
+    const v=w.n[k],col=cc(i),pct=v/3*100,absent=v===0,cat=NC[i];
+    let rvTxt,rvCol;
+    if(!absent){rvTxt=LV[v];rvCol='var(--mu)';}
+    else if(cat<=1){rvTxt='✕';rvCol='var(--red)';}
+    else if(cat===2){rvTxt='—';rvCol='var(--dim)';}
+    else{rvTxt='✓';rvCol='var(--green)';}
+    return `<div>
+      <div class="nr" onclick="this.nextElementSibling.classList.toggle('on')">
+        <span class="nic">${NI[i]}</span>
+        <span class="nlb" style="color:${col}">${NL[i]}</span>
+        <div class="ntr"><div class="nf" style="width:${pct}%;background:${col}"></div></div>
+        <span class="nv" style="color:${rvCol}">${rvTxt}</span>
+      </div>
+      <div class="ndesc"><div class="ndesc-in">${ND[k]}</div></div>
+    </div>`;
+  }).join('');
+  const pe=Object.entries(w.prices).map(([age,p])=>{
+    const lbl=isNaN(+age)?age.toUpperCase():age+' YEAR';
+    return `<div class="ne"><span class="ne-age">${lbl}</span><span class="ne-price">$${p.toLocaleString()}</span></div>`;
+  }).join('');
+  const ce=w.comment?`<div class="ne-comment">${w.comment}</div>`:'';
+  const notesH=(pe||ce)?`<div class="notes-box">${pe}${ce}</div>`:'';
+  document.getElementById('dB').innerHTML=`
+    <div class="dh">
+      <div class="d-lft"><div class="dn">${w.name}</div><div class="drg">${w.region}</div></div>
+      <div class="ds">${w.idx.toFixed(2)}</div>
+    </div>
+    <div class="d-sep"></div>
+    <div class="fp">${fp}</div>
+    ${notesH}
+    <button class="sim-btn" onclick="oSim(${w.id})">SEE SIMILAR OPTIONS</button>`;
+  oSh('dSh');
+}
+
+const STEPS=[
+  {k:'peat',q:'How smoky do you like it?',
+   o:[{ic:'🌾',lb:'None at all',v:0},{ic:'🌫️',lb:'A gentle wisp',v:1},{ic:'🔥',lb:'Heavily smoked',v:2},{ic:'🪨',lb:'Bog water, please',v:3}]},
+  {k:'coast',q:'Coastal or continental?',
+   o:[{ic:'🏔️',lb:'Prefer inland',v:0},{ic:'🌊',lb:'A hint of sea air',v:1},{ic:'⚓',lb:'Full coastal character',v:2}]},
+  {k:'sweet',q:'Sweet or bone dry?',
+   o:[{ic:'🏜️',lb:'Bone dry',v:0},{ic:'⚖️',lb:'Balanced',v:1},{ic:'🍯',lb:'Sweet and luscious',v:2}]},
+  {k:'fruit',q:'How fruity?',
+   o:[{ic:'🚫',lb:'Not particularly',v:0},{ic:'🍏',lb:'Light and fresh',v:1},{ic:'🍇',lb:'Deeply fruity',v:2}]},
+  {k:'character',q:'Fresh or warming?',
+   o:[{ic:'🌿',lb:'Light and grassy',v:0},{ic:'🍋',lb:'Bright and citrusy',v:1},{ic:'⚖️',lb:'No preference',v:2},{ic:'🌶️',lb:'Warm and spicy',v:3}]},
+];
+
+const PEAT_T=[0,1,2.5,3],HALF_T=[0,1.5,3],CHAR_T=[{g:3,c:1,sp:0},{g:1,c:3,sp:0},null,{g:0,c:0,sp:3}];
+function rScore(w,p){
+  let s=0;const n=w.n;
+  s-=Math.abs(n.peat-PEAT_T[p.peat||0])*4;
+  s-=Math.abs((n.brine+n.medicinal)/2-HALF_T[p.coast||0])*2.5;
+  s-=Math.abs((n.caramel+n.honey+n.sherry+n.vanilla)/4-HALF_T[p.sweet||0])*2;
+  s-=Math.abs((n.orchardFruit+n.driedFruit)/2-HALF_T[p.fruit||0])*1.5;
+  const ct=CHAR_T[p.character??2];
+  if(ct){s-=Math.abs(n.grassy-ct.g)*1.5;s-=Math.abs(n.citrus-ct.c)*1.5;s-=Math.abs(n.spice-ct.sp)*1.5;}
+  return s;
+}
+
+function oRec(){rStep=0;rPrefs={};rrStep();oSh('rSh');}
+function rrStep(){
+  const b=document.getElementById('rB');
+  if(rStep>=STEPS.length){aReg='rec';ca();rfilt();rg();return;}
+  const st=STEPS[rStep];
+  const backFn=rStep>0?`rStep--;rrStep()`:`ca()`;
+  b.innerHTML=`
+    <div class="r-nav">
+      <span class="r-qnum">QUESTION ${rStep+1} OF ${STEPS.length}</span>
+      <button class="r-back" onclick="${backFn}">BACK</button>
+    </div>
+    <div class="r-divider"></div>
+    <div class="rq">${st.q}</div>
+    <div class="ro">${st.o.map(o=>`
+      <button class="ropt${rPrefs[st.k]===o.v?' on':''}" onclick="pOpt('${st.k}',${o.v})">
+        <span class="ric">${o.ic}</span>${o.lb}
+      </button>`).join('')}
+    </div>`;
+}
+function pOpt(k,v){rPrefs[k]=v;rStep++;rrStep();}
+
+function oSh(id){document.getElementById('ov').classList.add('on');document.getElementById(id).classList.add('on');}
+function ca(){['ov','dSh','rSh'].forEach(id=>document.getElementById(id).classList.remove('on'));}
+
+rfilt();rg();
+</script>
+</body>
+</html>
