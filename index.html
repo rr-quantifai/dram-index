@@ -19,7 +19,7 @@ body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSyst
 .page{padding:var(--sp);display:flex;flex-direction:column;gap:var(--sp)}
 
 /* SEARCH */
-.srch-unit{background:var(--bgc);border:1px solid var(--br);border-radius:14px;display:flex;align-items:center;gap:10px;padding:13px 16px;box-shadow:var(--sh)}
+.srch-unit{background:var(--bgc);border:1px solid var(--br);border-radius:8px;display:flex;align-items:center;gap:10px;padding:13px 16px;box-shadow:var(--sh)}
 .srch-ico{color:var(--mu);font-size:15px;flex-shrink:0;line-height:1}
 .srch-si{flex:1;background:transparent;border:none;color:var(--tx);font-size:14px;outline:none;-webkit-appearance:none}
 .srch-si::placeholder{color:var(--mu)}
@@ -29,7 +29,7 @@ body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSyst
 .fs{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .fs::-webkit-scrollbar{display:none}
 .filter-wrap{display:flex;flex-direction:column;gap:12px}
-.pill{padding:6px 14px;border-radius:12px;border:1px solid var(--br);background:transparent;color:var(--mu);font-size:12px;white-space:nowrap;cursor:pointer;flex-shrink:0;transition:all .2s;-webkit-tap-highlight-color:transparent;height:32px;display:inline-flex;align-items:center;justify-content:center}
+.pill{padding:6px 14px;border-radius:8px;border:1px solid var(--br);background:transparent;color:var(--mu);font-size:12px;white-space:nowrap;cursor:pointer;flex-shrink:0;transition:all .2s;-webkit-tap-highlight-color:transparent;height:32px;display:inline-flex;align-items:center;justify-content:center}
 .pill.on{background:var(--gd);border-color:var(--gold);color:var(--gl)}
 .pill.pill-card{background:linear-gradient(150deg,#1b1814 0%,#131110 100%);border-color:var(--br);color:var(--tx);letter-spacing:1.5px}
 .pill.pill-card.on{background:linear-gradient(150deg,#231d13 0%,#1b1509 100%);border-color:var(--gold);color:var(--gl)}
@@ -42,7 +42,7 @@ body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSyst
 .grid{display:flex;flex-direction:column;gap:var(--sp)}
 
 /* CARD */
-.card{display:flex;flex-direction:column;gap:10px;background:linear-gradient(150deg,#1b1814 0%,#131110 100%);border:1px solid var(--br);border-radius:14px;padding:18px 20px;cursor:pointer;box-shadow:var(--sh);transition:border-color .15s;-webkit-tap-highlight-color:transparent;animation:fup .22s ease forwards}
+.card{display:flex;flex-direction:column;gap:10px;background:linear-gradient(150deg,#1b1814 0%,#131110 100%);border:1px solid var(--br);border-radius:8px;padding:18px 20px;cursor:pointer;box-shadow:var(--sh);transition:border-color .15s;-webkit-tap-highlight-color:transparent;animation:fup .22s ease forwards}
 .card:active{border-color:var(--gd)}
 .c-top,.c-bot{display:flex;justify-content:space-between;align-items:center}
 .c-name{font-family:var(--ser);font-size:17px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1;margin-right:12px}
@@ -66,7 +66,7 @@ body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSyst
 .d-lft{flex:1;min-width:0}
 .dn{font-family:var(--ser);font-size:24px;font-weight:normal;line-height:1.2;margin-bottom:5px}
 .drg{font-size:11px;color:var(--mu);letter-spacing:2px;text-transform:uppercase}
-.ds{font-family:var(--ser);font-size:28px;color:var(--bgm);line-height:1;flex-shrink:0;font-variant-numeric:lining-nums;background:var(--gold);padding:10px;border-radius:12px;text-box-trim:trim-both;text-box-edge:cap alphabetic}
+.ds{font-family:var(--ser);font-size:28px;color:var(--bgm);line-height:1;flex-shrink:0;font-variant-numeric:lining-nums;background:var(--gold);padding:10px;border-radius:8px;text-box-trim:trim-both;text-box-edge:cap alphabetic}
 .d-sep{height:1px;background:var(--br);margin-bottom:var(--sp)}
 
 /* FLAVOUR BARS */
@@ -82,7 +82,7 @@ body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSyst
 .ndesc-in{font-size:12px;color:var(--mu);line-height:1.55;padding:2px 0 10px 30px}
 
 /* NOTES BOX */
-.notes-box{border:1px solid var(--br);border-radius:12px;overflow:hidden;margin-top:var(--sp)}
+.notes-box{border:1px solid var(--br);border-radius:8px;overflow:hidden;margin-top:var(--sp)}
 .ne{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--br)}
 .ne:last-child{border-bottom:none}
 .ne-age{font-size:12px;color:var(--tx);text-transform:uppercase;letter-spacing:1px;flex:1}
@@ -90,7 +90,7 @@ body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSyst
 .ne-comment{padding:14px 16px;font-size:13px;color:var(--tx);line-height:1.6}
 
 /* SIMILAR BUTTON */
-.sim-btn{display:block;width:100%;margin-top:var(--sp);padding:14px 16px;border:1px solid var(--br);border-radius:12px;background:transparent;color:var(--mu);font-size:10px;letter-spacing:2px;text-transform:uppercase;text-align:center;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.sim-btn{display:block;width:100%;margin-top:12px;padding:14px 16px;border:1px solid var(--br);border-radius:8px;background:transparent;color:var(--mu);font-size:10px;letter-spacing:2px;text-transform:uppercase;text-align:center;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
 .sim-btn:active{border-color:var(--gold);color:var(--gl)}
 
 /* RECOMMENDER */
@@ -100,8 +100,8 @@ body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSyst
 .r-back:active{border-color:var(--gold);color:var(--gl)}
 .r-divider{height:1px;background:var(--br)}
 .rq{font-family:var(--ser);font-size:22px;line-height:1.3;padding:var(--sp) 0}
-.ro{display:flex;flex-direction:column;gap:var(--sp)}
-.ropt{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--bgc);border:1px solid var(--br);border-radius:12px;color:var(--tx);font-size:14px;cursor:pointer;text-align:left;width:100%;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.ro{display:flex;flex-direction:column;gap:12px}
+.ropt{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--bgc);border:1px solid var(--br);border-radius:8px;color:var(--tx);font-size:14px;cursor:pointer;text-align:left;width:100%;transition:all .15s;-webkit-tap-highlight-color:transparent}
 .ropt:active,.ropt.on{border-color:var(--gold);background:var(--gd);color:var(--gl)}
 .ric{font-size:18px}
 
@@ -193,6 +193,12 @@ const dsz=v=>v===1?5:v===2?7:9;
 const mkDots=list=>list.map(({i,v})=>`<span class="dot" style="width:${dsz(v)}px;height:${dsz(v)}px;background:${cc(i)};opacity:.85"></span>`).join('');
 const matchFlavs=w=>aFlavours.every(k=>w.n[k]>0);
 
+function canAddReg(r){
+  return WS.some(w=>{
+    if(w.region!==r)return false;
+    return aFlavours.every(fk=>w.n[fk]>0);
+  });
+}
 function canAdd(k){
   const test=[...aFlavours,k];
   return WS.some(w=>{
@@ -219,21 +225,21 @@ function rfilt(){
     `<button class="pill pill-card${aReg==='All'&&!aFlavours.length?' on':''}" onclick="sAll()">ALL</button>`,
     `<button class="pill pill-card${aReg==='rec'?' on':''}" onclick="oRec()">★ RECOMMEND</button>`,
     ...(aSim?[`<button class="pill pill-card on" onclick="clearSim()">≈ SIMILAR</button>`]:[]),
-    ...REGIONS.map(r=>`<button class="pill pill-reg${aReg===r?' on':''}" onclick="sReg('${r}')">${r}</button>`)
+    ...REGIONS.map(r=>{const rOff=inMode||(aReg!==r&&!canAddReg(r));return`<button class="pill pill-reg${aReg===r?' on':''}${rOff?' off':''}" onclick="sReg('${r}')">${r}</button>`;})
   ];
   document.getElementById('filters').innerHTML=specials.join('');
 
   const inMode=aReg==='rec'||aReg==='similar';
   document.getElementById('flavFilters').innerHTML=NK.map((k,i)=>{
     const on=aFlavours.includes(k),col=cc(i);
-    const possible=inMode||on||canAdd(k);
+    const possible=!inMode&&(on||canAdd(k));
     const style=on?`background:${col}22;border-color:${col};color:${col}`:'';
     return `<button class="pill pill-icon${aFlavours.includes(k)?' on':''}" style="${style}" onclick="tFlavour('${k}')">${aFlavours.includes(k)?NL[i]:NI[i]}</button>`;
   }).join('');
 }
 
 function sAll(){aReg='All';aFlavours=[];aSim=null;rfilt();rg();}
-function sReg(r){aReg=r;aSim=null;rfilt();rg();}
+function sReg(r){if(aReg===r){sAll();}else{aReg=r;aSim=null;rfilt();rg();}}
 function tFlavour(k){
   if(aReg==='rec'||aReg==='similar'){aReg='All';aSim=null;}
   aFlavours=aFlavours.includes(k)?aFlavours.filter(x=>x!==k):[...aFlavours,k];
@@ -321,7 +327,7 @@ function rScore(w,p){
   return s;
 }
 
-function oRec(){rStep=0;rPrefs={};rrStep();oSh('rSh');}
+function oRec(){if(aReg==='rec'){sAll();}else{rStep=0;rPrefs={};rrStep();oSh('rSh');}}
 function rrStep(){
   const b=document.getElementById('rB');
   if(rStep>=STEPS.length){aReg='rec';ca();rfilt();rg();return;}
