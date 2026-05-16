@@ -302,8 +302,7 @@ function oDet(w){
     </div>
     <div class="d-sep"></div>
     <div class="fp">${fp}</div>
-    ${notesH}
-    `;
+    ${notesH}`;
   oSh('dSh');
 }
 
@@ -339,7 +338,7 @@ function rrStep(){
   const st=STEPS[rStep];
   b.innerHTML=`
     <div class="r-nav">
-      <div class="r-prog">${STEPS.map((_,i)=>`<div class="r-seg${i<rStep?' done':''}"${i<rStep?` onclick="rStep=${i};rrStep()"`:''} style="${i<rStep?'cursor:pointer':''}">${i+1}</div>`).join('')}</div>
+      <div class="r-prog">${STEPS.map((_,i)=>`<div class="r-seg${i<rStep?' done':''}"${i<rStep?` onclick="rStep=${i};rrStep()"`:''} ${i<rStep?'style="cursor:pointer"':''}>${i+1}</div>`).join('')}</div>
     </div>
     <div class="r-divider"></div>
     <div class="rq">${st.q}</div>
