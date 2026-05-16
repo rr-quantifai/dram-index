@@ -29,11 +29,13 @@ body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSyst
 .fs{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .fs::-webkit-scrollbar{display:none}
 .filter-wrap{display:flex;flex-direction:column;gap:12px}
-.pill{padding:6px 14px;border-radius:20px;border:1px solid var(--br);background:transparent;color:var(--mu);font-size:12px;white-space:nowrap;cursor:pointer;flex-shrink:0;transition:all .2s;-webkit-tap-highlight-color:transparent}
+.pill{padding:6px 14px;border-radius:12px;border:1px solid var(--br);background:transparent;color:var(--mu);font-size:12px;white-space:nowrap;cursor:pointer;flex-shrink:0;transition:all .2s;-webkit-tap-highlight-color:transparent;height:32px;display:inline-flex;align-items:center;justify-content:center}
 .pill.on{background:var(--gd);border-color:var(--gold);color:var(--gl)}
 .pill.pill-card{background:linear-gradient(150deg,#1b1814 0%,#131110 100%);border-color:var(--br);color:var(--tx);letter-spacing:1.5px}
 .pill.pill-card.on{background:linear-gradient(150deg,#231d13 0%,#1b1509 100%);border-color:var(--gold);color:var(--gl)}
 .pill-reg{text-transform:uppercase;letter-spacing:1px}
+.pill-icon{width:32px;padding:0}
+.pill-icon.on{width:auto;padding:6px 14px}
 .pill.off{opacity:.3;cursor:not-allowed;pointer-events:none}
 
 /* GRID */
@@ -226,7 +228,7 @@ function rfilt(){
     const on=aFlavours.includes(k),col=cc(i);
     const possible=inMode||on||canAdd(k);
     const style=on?`background:${col}22;border-color:${col};color:${col}`:'';
-    return `<button class="pill${!possible?' off':''}" style="${style}" onclick="tFlavour('${k}')"><span style="margin-right:6px">${NI[i]}</span>${NL[i]}</button>`;
+    return `<button class="pill pill-icon${aFlavours.includes(k)?' on':''}" style="${style}" onclick="tFlavour('${k}')">${aFlavours.includes(k)?NL[i]:NI[i]}</button>`;
   }).join('');
 }
 
