@@ -226,7 +226,7 @@ function rfilt(){
     const on=aFlavours.includes(k),col=cc(i);
     const possible=inMode||on||canAdd(k);
     const style=on?`background:${col}22;border-color:${col};color:${col}`:'';
-    return `<button class="pill${!possible?' off':''}" style="${style}" onclick="tFlavour('${k}')"><span style="margin-right:4px">${NI[i]}</span>${NL[i]}</button>`;
+    return `<button class="pill${!possible?' off':''}" style="${style}" onclick="tFlavour('${k}')"><span style="margin-right:6px">${NI[i]}</span>${NL[i]}</button>`;
   }).join('');
 }
 
