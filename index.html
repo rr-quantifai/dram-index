@@ -69,7 +69,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Inter',ui-sans-serif,sans
 .d-lft{flex:1;min-width:0;display:inline-flex;flex-direction:column;justify-content:center}
 .dn{font-family:var(--ser);font-size:24px;font-weight:normal;line-height:1.2;margin-bottom:5px}
 .drg{font-size:11px;color:var(--mu);letter-spacing:2px;text-transform:uppercase}
-.ds{font-family:var(--ser);font-size:28px;color:var(--bgm);line-height:1;flex-shrink:0;font-variant-numeric:lining-nums;background:var(--gold);padding:10px;border-radius:8px;text-box-trim:trim-both;text-box-edge:cap alphabetic}
+.ds{font-family:var(--ser);font-size:28px;color:var(--bgm);line-height:1;flex-shrink:0;font-variant-numeric:lining-nums;background:var(--gold);padding:10px;border-radius:8px}
 .d-sep{height:1px;background:var(--br);margin-bottom:var(--sp)}
 
 /* FLAVOUR BARS */
@@ -132,6 +132,8 @@ body{background:var(--bg);color:var(--tx);font-family:'Inter',ui-sans-serif,sans
 
 <script>
 const NK=['peat','medicinal','brine','citrus','cocoa','grassy','spice','caramel','driedFruit','orchardFruit','vanilla','floral','honey','sherry'];
+const SIM_COUNT=5;
+const REC_COUNT=3;
 const NL=['Peat','Medicinal','Brine','Citrus','Cocoa','Grassy','Spice','Caramel','Dried Fruit','Orchard','Vanilla','Floral','Honey','Sherry'];
 const NI=['🔥','💊','🌊','🍋','☕','🌿','🌶️','🍬','🍇','🍎','🍦','🌸','🍯','🍷'];
 const NC=[0,0,1,1,1,1,1,2,2,2,2,3,3,3];
@@ -188,7 +190,12 @@ const WS=RAW.map(([name,region,idx,na,prices,comment],id)=>({
 const regCnt={};WS.forEach(w=>{regCnt[w.region]=(regCnt[w.region]||0)+1;});
 const REGIONS=[...new Set(WS.map(w=>w.region))].sort((a,b)=>regCnt[b]-regCnt[a]);
 
-let aReg='All',aFlavours=[],aSim=null,aSimMode=null,rPrefs={},rStep=0;
+let aReg='All';
+let aFlavours=[];
+let aSim=null;
+let aSimMode=null;
+let rPrefs={};
+let rStep=0;
 
 const cc=i=>CC[NC[i]];
 const topN=w=>NK.map((k,i)=>({i,v:w.n[k]})).filter(x=>x.v>0).sort((a,b)=>b.v-a.v);
@@ -213,7 +220,7 @@ function canAdd(k){
 function getSimilar(ref){
   return WS.filter(w=>w.id!==ref.id)
     .map(w=>({w,d:Math.sqrt(NK.reduce((s,k)=>s+(w.n[k]-ref.n[k])**2,0))}))
-    .sort((a,b)=>a.d-b.d).slice(0,5).map(x=>x.w);
+    .sort((a,b)=>a.d-b.d).slice(0,SIM_COUNT).map(x=>x.w);
 }
 
 function mkCard(w){
@@ -235,8 +242,10 @@ function rfilt(){
   ];
   document.getElementById('filters').innerHTML=specials.join('');
   const nonAll=aReg!=='All'||aFlavours.length>0||simOn;
-  document.getElementById('srch').disabled=nonAll;
-  document.getElementById('srch').style.opacity=nonAll?'0.3':'1';
+  const si=document.getElementById('srch');
+  if(nonAll)si.value='';
+  si.disabled=nonAll;
+  si.style.opacity=nonAll?'0.3':'1';
   document.getElementById('flavFilters').innerHTML=NK.map((k,i)=>{
     const on=aFlavours.includes(k),col=cc(i);
     const possible=!inMode&&!simOn&&(on||canAdd(k));
@@ -257,7 +266,7 @@ function tFlavour(k){
 function rg(){
   let list;
   if(aReg==='rec'){
-    list=WS.map(w=>({w,s:rScore(w,rPrefs)})).sort((a,b)=>b.s-a.s).slice(0,3).map(x=>x.w);
+    list=WS.map(w=>({w,s:rScore(w,rPrefs)})).sort((a,b)=>b.s-a.s).slice(0,REC_COUNT).map(x=>x.w);
   }else if(aSimMode==='results'&&aSim){
     list=getSimilar(aSim);
   }else if(aSimMode==='pick'){
@@ -325,15 +334,16 @@ const STEPS=[
 const PEAT_T=[0,1,2.5,3],HALF_T=[0,1.5,3],CHAR_T=[{g:3,c:1,sp:0},{g:1,c:3,sp:0},null,{g:0,c:0,sp:3}];
 function rScore(w,p){
   let s=0;const n=w.n;
-  s-=Math.abs(n.peat-PEAT_T[p.peat||0])*4;
-  s-=Math.abs((n.brine+n.medicinal)/2-HALF_T[p.coast||0])*2.5;
-  s-=Math.abs((n.caramel+n.honey+n.sherry+n.vanilla)/4-HALF_T[p.sweet||0])*2;
-  s-=Math.abs((n.orchardFruit+n.driedFruit)/2-HALF_T[p.fruit||0])*1.5;
+  s-=Math.abs(n.peat-PEAT_T[p.peat??0])*4;
+  s-=Math.abs((n.brine+n.medicinal)/2-HALF_T[p.coast??0])*2.5;
+  s-=Math.abs((n.caramel+n.honey+n.sherry+n.vanilla)/4-HALF_T[p.sweet??0])*2;
+  s-=Math.abs((n.orchardFruit+n.driedFruit)/2-HALF_T[p.fruit??0])*1.5;
   const ct=CHAR_T[p.character??2];
   if(ct){s-=Math.abs(n.grassy-ct.g)*1.5;s-=Math.abs(n.citrus-ct.c)*1.5;s-=Math.abs(n.spice-ct.sp)*1.5;}
   return s;
 }
 
+function goStep(i){rStep=i;rrStep();}
 function oRec(){if(aReg==='rec'){sAll();}else{rStep=0;rPrefs={};rrStep();oSh('rSh');}}
 function rrStep(){
   const b=document.getElementById('rB');
@@ -341,7 +351,7 @@ function rrStep(){
   const st=STEPS[rStep];
   b.innerHTML=`
     <div class="r-nav">
-      <div class="r-prog">${STEPS.map((_,i)=>`<div class="r-seg${i<rStep?' done':''}"${i<rStep?` onclick="rStep=${i};rrStep()"`:''} ${i<rStep?'style="cursor:pointer"':''}>${i+1}</div>`).join('')}</div>
+      <div class="r-prog">${STEPS.map((_,i)=>`<div class="r-seg${i<rStep?' done':''}"${i<rStep?` onclick="goStep(${i})"`:''} ${i<rStep?'style="cursor:pointer"':''}>${i+1}</div>`).join('')}</div>
     </div>
     <div class="r-divider"></div>
     <div class="rq">${st.q}</div>
