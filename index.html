@@ -158,39 +158,56 @@ const ND={
   sherry:"A sweet, nutty, rich flavour, caused by maturation in oak casks that previously held sherry"
 };
 
+// na = array of 14 values (0=Absent,1=Low,2=Medium,3=High)
+// Groups mirror the spreadsheet column ranges:
+//   D:E  → [0,1]   peat, medicinal        — weighted 4/2/1
+//   F:J  → [2..6]  brine,citrus,cocoa,grassy,spice — counted 1/1/1
+//   K:N  → [7..10] caramel,driedFruit,orchardFruit,vanilla — dampened 0.25/0.5/1
+//   O:Q  → [11..13] floral,honey,sherry   — counted 1/1/1
+function calcIdx(na){
+  const num=
+    na.slice(0,2).reduce((s,v)=>s+(v===3?4:v===2?2:v===1?1:0),0)+
+    na.slice(2,7).filter(v=>v>0).length;
+  const den=
+    na.slice(7,11).reduce((s,v)=>s+(v===3?1:v===2?0.5:v===1?0.25:0),0)+
+    na.slice(11,14).filter(v=>v>0).length;
+  return den>0?Math.round(num/den*100)/100:num;
+}
+
 const TRUNC_LEN=12;
 const trunc=n=>n.length>TRUNC_LEN?n.slice(0,TRUNC_LEN)+'\u2026':n;
 
 const RAW=[
-  ["Ardbeg 10","Islay",13.00,[3,3,3,2,2,1,2,1,1,1,1,0,0,0],{"10":75},null],
-  ["Laphroaig 10","Islay",6.86,[3,3,3,1,0,1,2,0,0,1,2,0,1,0],{"10":50,"25":500,"27":750,"30":1000,"33":1500},null],
-  ["Talisker 10","Isle of Skye",4.50,[3,1,3,2,0,1,3,1,1,1,1,0,2,0],{},null],
-  ["Lagavulin 16","Islay",3.71,[3,3,3,1,1,1,2,1,2,1,2,0,1,2],{"16":100},null],
-  ["Caol Ila 12","Islay",2.55,[2,1,2,3,0,2,1,1,0,1,1,1,1,0],{},null],
-  ["Connemara","Ireland",2.33,[2,1,1,1,0,2,2,1,0,1,2,3,3,0],{},null],
-  ["Bowmore 12","Islay",2.15,[2,1,2,2,0,1,1,1,1,1,2,3,3,0],{},null],
-  ["Ardmore Legacy","Highland",2.00,[1,1,1,1,1,1,2,1,0,1,3,3,3,0],{},null],
-  ["Kurayoshi Matsui Sakura","Japan",0.71,[0,0,0,3,0,1,2,2,1,3,2,3,3,0],{},"Aged in cherry blossom casks. Proximity to orange orchards gives it a distinct, bright citrus and orange peel note"],
-  ["Oban 14","Highland",1.18,[1,0,2,3,0,1,3,1,2,3,2,1,3,0],{},null],
-  ["Suntory Hakushu 12","Japan",1.00,[1,0,1,2,0,3,2,1,1,3,2,2,2,1],{"Dist. Reserve":100,"12":250},null],
-  ["Cardhu 12","Speyside",0.94,[0,0,1,2,0,2,1,3,1,2,2,2,3,0],{},null],
-  ["Amrut Fusion","India",0.84,[1,0,0,2,2,0,3,3,2,3,1,1,2,0],{},null],
-  ["Johnnie Walker Blue Label","Blended",0.83,[0,0,1,2,1,1,3,3,3,3,3,0,3,2],{},null],
-  ["Bunnahabhain 12","Islay",0.83,[0,1,2,1,0,1,2,3,3,2,2,1,1,3],{},null],
-  ["Jura 10","Isle of Jura",0.73,[0,0,1,2,0,2,2,3,3,3,2,0,3,3],{},null],
-  ["Yamazaki 12","Japan",0.67,[0,0,0,2,1,1,2,2,2,3,3,2,3,2],{},null],
-  ["The Balvenie 12","Speyside",0.62,[0,0,0,1,1,1,2,3,2,3,3,1,3,2],{},null],
-  ["The Macallan 18","Speyside",0.62,[0,0,0,1,2,1,3,3,3,2,3,1,2,3],{"12":100,"18":500,"25":3000,"30":5000},null],
-  ["Glenmorangie 10","Highland",0.60,[0,0,0,3,0,2,1,2,0,2,3,2,3,1],{},null],
-  ["Hiram Walker Lot No. 40 Rye","Canada",0.63,[0,0,0,2,0,2,3,3,1,2,3,2,1,0],{},"100% rye grain and single copper pot still distillation give it a characteristic spicy profile"],
-  ["Glenfiddich 12","Speyside",0.48,[0,0,0,2,0,2,1,3,1,3,3,2,2,1],{},null],
-  ["Glenlivet 12","Speyside",0.48,[0,0,0,1,0,2,2,3,1,3,3,2,2,1],{},null],
-  ["Rampur","India",0.36,[0,0,0,3,0,0,3,2,3,2,2,1,3,3],{},null],
-  ["Piccadily Indri Trini","India",0.29,[0,0,0,2,0,0,3,3,3,3,3,1,2,2],{},"Triple-casked in bourbon, French wine, and sherry barrels"],
+  ["Ardbeg 10","Islay",[3,3,3,2,2,1,2,1,1,1,1,0,0,0],{"10":75},null],
+  ["Laphroaig 10","Islay",[3,3,3,1,0,1,2,0,0,1,2,0,1,0],{"10":50,"25":500,"27":750,"30":1000,"33":1500},null],
+  ["Talisker 10","Isle of Skye",[3,1,3,2,0,1,3,1,1,1,1,0,2,0],{},null],
+  ["Lagavulin 16","Islay",[3,3,3,1,1,1,2,1,2,1,2,0,1,2],{"16":100},null],
+  ["Caol Ila 12","Islay",[2,1,2,3,0,2,1,1,0,1,1,1,1,0],{},null],
+  ["Connemara","Ireland",[2,1,1,1,0,2,2,1,0,1,2,3,3,0],{},null],
+  ["Bowmore 12","Islay",[2,1,2,2,0,1,1,1,1,1,2,3,3,0],{},null],
+  ["Ardmore Legacy","Highland",[1,1,1,1,1,1,2,1,0,1,3,3,3,0],{},null],
+  ["Kurayoshi Matsui Sakura","Japan",[0,0,0,3,0,1,2,2,1,3,2,3,3,0],{},"Aged in cherry blossom casks. Proximity to orange orchards gives it a distinct, bright citrus and orange peel note"],
+  ["Oban 14","Highland",[1,0,2,3,0,1,3,1,2,3,2,1,3,0],{},null],
+  ["Suntory Hakushu 12","Japan",[1,0,1,2,0,3,2,1,1,3,2,2,2,1],{"Dist. Reserve":100,"12":250},null],
+  ["Cardhu 12","Speyside",[0,0,1,2,0,2,1,3,1,2,2,2,3,0],{},null],
+  ["Amrut Fusion","India",[1,0,0,2,2,0,3,3,2,3,1,1,2,0],{},null],
+  ["Johnnie Walker Blue Label","Blended",[0,0,1,2,1,1,3,3,3,3,3,0,3,2],{},null],
+  ["Bunnahabhain 12","Islay",[0,1,2,1,0,1,2,3,3,2,2,1,1,3],{},null],
+  ["Jura 10","Isle of Jura",[0,0,1,2,0,2,2,3,3,3,2,0,3,3],{},null],
+  ["Yamazaki 12","Japan",[0,0,0,2,1,1,2,2,2,3,3,2,3,2],{},null],
+  ["The Balvenie 12","Speyside",[0,0,0,1,1,1,2,3,2,3,3,1,3,2],{},null],
+  ["The Macallan 18","Speyside",[0,0,0,1,2,1,3,3,3,2,3,1,2,3],{"12":100,"18":500,"25":3000,"30":5000},null],
+  ["Glenmorangie 10","Highland",[0,0,0,3,0,2,1,2,0,2,3,2,3,1],{},null],
+  ["Hiram Walker Lot No. 40 Rye","Canada",[0,0,0,2,0,2,3,3,1,2,3,2,1,0],{},"100% rye grain and single copper pot still distillation give it a characteristic spicy profile"],
+  ["Glenfiddich 12","Speyside",[0,0,0,2,0,2,1,3,1,3,3,2,2,1],{},null],
+  ["Glenlivet 12","Speyside",[0,0,0,1,0,2,2,3,1,3,3,2,2,1],{},null],
+  ["Rampur","India",[0,0,0,3,0,0,3,2,3,2,2,1,3,3],{},null],
+  ["Piccadily Indri Trini","India",[0,0,0,2,0,0,3,3,3,3,3,1,2,2],{},"Triple-casked in bourbon, French wine, and sherry barrels"],
 ];
 
-const WS=RAW.map(([name,region,idx,na,prices,comment],id)=>({
-  id,name,region,idx,
+const WS=RAW.map(([name,region,na,prices,comment],id)=>({
+  id,name,region,
+  idx:calcIdx(na),
   n:Object.fromEntries(NK.map((k,i)=>[k,na[i]])),
   prices,comment
 }));
